@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\TestController;
-use App\Services\Instagram\Features\FetchAccountDataFeature;
+use App\Services\Instagram\Features\CollectAccountDataFeature;
 use Illuminate\Support\Facades\Route;
 use Phpfastcache\Helper\Psr16Adapter;
 

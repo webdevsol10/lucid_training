@@ -2,22 +2,27 @@
 
 namespace App\Domains\Instagram\Jobs;
 
+use InstagramScraper\Instagram;
+use InstagramScraper\Model\Account;
 use Lucid\Units\Job;
 use Phpfastcache\Helper\Psr16Adapter;
 
 class FetchAccountDataJob extends Job
 {
-    private $handle;
+    private string $handle;
+
+    private $instagram;
 
     /**
      * Create a new job instance.
      *
      * @param $handle
+     * @param $instagram
      */
-    public function __construct($handle)
+    public function __construct(string $handle, $instagram)
     {
-        //
         $this->handle = $handle;
+        $this->instagram = $instagram;
     }
 
     /**
@@ -27,24 +32,27 @@ class FetchAccountDataJob extends Job
      */
     public function handle()
     {
-        $username = 'webdevsol6@gmail.com';
-        $password = 'fdskjf&^#$jDJH4738878';
+        /** @var Account $account */
+        $account = $this->instagram->getAccount($this->handle);
+        $medias = $account->getMedias();
 
-        $instagram = \InstagramScraper\Instagram::withCredentials(
-            new \GuzzleHttp\Client(),
-            $username,
-            $password,
-            new Psr16Adapter('Files')
-        );
-        $instagram->login();
-
-        $account = $instagram->getAccount($this->handle);
-
+        $mediasData = array_map(function ($media) {
+            [
+                'id' => $media->getId(),
+                'short_code' => $media->getShortCode(),
+                "video_views" => $media->getVideoViews(),
+                "comments" => $media->getCommentsCount(),
+                "likes" => $media->getLikesCount(),
+            ];
+        }, $medias);
 
         return [
-            "following" => $account->getFollowedByCount(),
-            "followers" => $account->getFollowsCount(),
-            "media_count" => $account->getMediaCount()
+            "content" => $mediasData,
+            "account" => [
+                "following" => $account->getFollowedByCount(),
+                "followers" => $account->getFollowsCount(),
+                "media_count" => $account->getMediaCount()
+            ]
         ];
 
     }
