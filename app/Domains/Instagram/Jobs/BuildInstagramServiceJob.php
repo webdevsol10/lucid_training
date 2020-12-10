@@ -21,17 +21,27 @@ class BuildInstagramServiceJob extends Job
     /**
      * Execute the job.
      *
-     * @return void
+     * @return Instagram
+     * @throws \InstagramScraper\Exception\InstagramAuthException
+     * @throws \InstagramScraper\Exception\InstagramChallengeRecaptchaException
+     * @throws \InstagramScraper\Exception\InstagramChallengeSubmitPhoneNumberException
+     * @throws \InstagramScraper\Exception\InstagramException
+     * @throws \Phpfastcache\Exceptions\PhpfastcacheDriverCheckException
+     * @throws \Phpfastcache\Exceptions\PhpfastcacheDriverException
+     * @throws \Phpfastcache\Exceptions\PhpfastcacheDriverNotFoundException
+     * @throws \Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException
+     * @throws \Phpfastcache\Exceptions\PhpfastcacheInvalidConfigurationException
+     * @throws \Phpfastcache\Exceptions\PhpfastcacheLogicException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws \ReflectionException
      */
     public function handle() : Instagram
     {
-        $username = 'webdevsol6@gmail.com';
-        $password = 'fdskjf&^#$jDJH4738878';
 
         $instagram = Instagram::withCredentials(
             new \GuzzleHttp\Client(),
-            $username,
-            $password,
+            env('INSTAGRAM_LOGIN'),
+            env('INSTAGRAM_PASSWORD'),
             new Psr16Adapter('Files')
         );
 
